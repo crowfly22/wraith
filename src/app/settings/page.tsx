@@ -5,354 +5,170 @@ import Link from "next/link";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
-    // Sniper Settings
     defaultBuyAmount: "0.1",
     slippage: "12",
     gasPrice: "auto",
     maxGas: "100",
     autoApprove: true,
-    
-    // Take Profit / Stop Loss
     takeProfit1: "50",
     takeProfit2: "100",
     takeProfit3: "200",
     stopLoss: "30",
-    
-    // Safety
     minLiquidity: "10000",
     maxBuyTax: "10",
     maxSellTax: "10",
     checkHoneypot: true,
     checkContractVerified: true,
-    
-    // Notifications
     notifyOnBuy: true,
     notifyOnSell: true,
     notifyOnSnipe: true,
     telegramBot: "",
     discordWebhook: "",
-    
-    // Advanced
     mevProtection: true,
     frontrunProtection: true,
     privateMempool: false,
   });
 
-  const handleSave = () => {
-    // Save settings logic
-    alert("Settings saved!");
-  };
+  const Toggle = ({ value, onChange }: { value: boolean; onChange: () => void }) => (
+    <button onClick={onChange} style={{
+      width: "48px", height: "24px", borderRadius: "12px", border: "none", cursor: "pointer",
+      background: value ? "var(--color-success)" : "var(--color-text-muted)", transition: "all 0.2s ease", position: "relative",
+    }}>
+      <div style={{
+        width: "20px", height: "20px", borderRadius: "50%", background: "#fff", position: "absolute", top: "2px",
+        left: value ? "26px" : "2px", transition: "all 0.2s ease",
+      }} />
+    </button>
+  );
+
+  const SettingRow = ({ label, desc, value, onChange }: { label: string; desc?: string; value: boolean; onChange: () => void }) => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px", borderRadius: "10px", background: "rgba(0,0,0,0.3)" }}>
+      <div>
+        <span style={{ fontSize: "13px", display: "block" }}>{label}</span>
+        {desc && <span style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>{desc}</span>}
+      </div>
+      <Toggle value={value} onChange={onChange} />
+    </div>
+  );
+
+  const InputField = ({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) => (
+    <div>
+      <label style={{ fontSize: "11px", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "6px", display: "block" }}>{label}</label>
+      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="input-glass" placeholder={placeholder} />
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 fixed left-0 top-0 h-full glass border-r border-[var(--color-border-glow)] z-50">
-        <div className="p-6">
-          <div className="mb-8">
-            <Link href="/">
-              <h1 className="text-2xl font-bold gradient-text cursor-pointer" style={{ fontFamily: "'Playfair Display', serif" }}>
-                WRAITH
-              </h1>
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <Link href="/">
+            <h1 className="gradient-text" style={{ fontFamily: "'Playfair Display', serif", cursor: "pointer" }}>WRAITH</h1>
+          </Link>
+          <p>WEB3 SNIPER BOT</p>
+        </div>
+        <div className="sidebar-section">
+          <div className="sidebar-section-title">Navigation</div>
+          <nav>
+            <Link href="/" className="sidebar-nav-item">
+              <span className="icon">🎯</span>
+              <span>Dashboard</span>
             </Link>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">Web3 Sniper Bot</p>
-          </div>
-          <nav className="space-y-2">
-            <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-text-secondary)] hover:bg-[rgba(0,229,255,0.05)] hover:border hover:border-[var(--color-border-glow)] transition-all">
-              <span className="text-lg">🎯</span>
-              <span className="font-medium">Dashboard</span>
+            <Link href="/scanner" className="sidebar-nav-item">
+              <span className="icon">🔍</span>
+              <span>Token Scanner</span>
             </Link>
-            <Link href="/scanner" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-text-secondary)] hover:bg-[rgba(0,229,255,0.05)] hover:border hover:border-[var(--color-border-glow)] transition-all">
-              <span className="text-lg">🔍</span>
-              <span className="font-medium">Token Scanner</span>
+            <Link href="/history" className="sidebar-nav-item">
+              <span className="icon">📊</span>
+              <span>Trade History</span>
             </Link>
-            <Link href="/history" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-text-secondary)] hover:bg-[rgba(0,229,255,0.05)] hover:border hover:border-[var(--color-border-glow)] transition-all">
-              <span className="text-lg">📊</span>
-              <span className="font-medium">Trade History</span>
-            </Link>
-            <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(0,229,255,0.1)] border border-[var(--color-border-glow)] text-[var(--color-accent)]">
-              <span className="text-lg">⚙️</span>
-              <span className="font-medium">Settings</span>
+            <Link href="/settings" className="sidebar-nav-item active">
+              <span className="icon">⚙️</span>
+              <span>Settings</span>
             </Link>
           </nav>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="ml-64 flex-1 p-6">
-        <header className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Settings
-              </h2>
-              <p className="text-[var(--color-text-secondary)] mt-1">
-                Configure your sniper bot parameters
-              </p>
-            </div>
-            <button onClick={handleSave} className="btn-primary">
-              💾 Save Settings
-            </button>
+      <main className="main-content">
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "32px" }}>
+          <div>
+            <h2 style={{ fontSize: "32px", fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>Settings</h2>
+            <p style={{ color: "var(--color-text-secondary)", marginTop: "4px", fontSize: "14px" }}>Configure your sniper bot parameters</p>
           </div>
+          <button className="btn-primary" onClick={() => alert("Settings saved!")}>💾 Save Settings</button>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
           {/* Sniper Settings */}
           <div className="glass-card">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span>🎯</span> Sniper Settings
             </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Default Buy Amount</label>
-                <input
-                  type="text"
-                  value={settings.defaultBuyAmount}
-                  onChange={(e) => setSettings({...settings, defaultBuyAmount: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Slippage Tolerance (%)</label>
-                <input
-                  type="text"
-                  value={settings.slippage}
-                  onChange={(e) => setSettings({...settings, slippage: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Gas Price (Gwei)</label>
-                <input
-                  type="text"
-                  value={settings.gasPrice}
-                  onChange={(e) => setSettings({...settings, gasPrice: e.target.value})}
-                  className="input-glass"
-                  placeholder="auto"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Max Gas (Gwei)</label>
-                <input
-                  type="text"
-                  value={settings.maxGas}
-                  onChange={(e) => setSettings({...settings, maxGas: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <span className="text-sm">Auto-approve tokens</span>
-                <button
-                  onClick={() => setSettings({...settings, autoApprove: !settings.autoApprove})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.autoApprove ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.autoApprove ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <InputField label="Default Buy Amount" value={settings.defaultBuyAmount} onChange={(v) => setSettings({...settings, defaultBuyAmount: v})} />
+              <InputField label="Slippage Tolerance (%)" value={settings.slippage} onChange={(v) => setSettings({...settings, slippage: v})} />
+              <InputField label="Gas Price (Gwei)" value={settings.gasPrice} onChange={(v) => setSettings({...settings, gasPrice: v})} placeholder="auto" />
+              <InputField label="Max Gas (Gwei)" value={settings.maxGas} onChange={(v) => setSettings({...settings, maxGas: v})} />
+              <SettingRow label="Auto-approve tokens" value={settings.autoApprove} onChange={() => setSettings({...settings, autoApprove: !settings.autoApprove})} />
             </div>
           </div>
 
-          {/* Take Profit / Stop Loss */}
+          {/* TP/SL */}
           <div className="glass-card">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span>📈</span> Take Profit / Stop Loss
             </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Take Profit 1 (%)</label>
-                <input
-                  type="text"
-                  value={settings.takeProfit1}
-                  onChange={(e) => setSettings({...settings, takeProfit1: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Take Profit 2 (%)</label>
-                <input
-                  type="text"
-                  value={settings.takeProfit2}
-                  onChange={(e) => setSettings({...settings, takeProfit2: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Take Profit 3 (%)</label>
-                <input
-                  type="text"
-                  value={settings.takeProfit3}
-                  onChange={(e) => setSettings({...settings, takeProfit3: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Stop Loss (%)</label>
-                <input
-                  type="text"
-                  value={settings.stopLoss}
-                  onChange={(e) => setSettings({...settings, stopLoss: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <InputField label="Take Profit 1 (%)" value={settings.takeProfit1} onChange={(v) => setSettings({...settings, takeProfit1: v})} />
+              <InputField label="Take Profit 2 (%)" value={settings.takeProfit2} onChange={(v) => setSettings({...settings, takeProfit2: v})} />
+              <InputField label="Take Profit 3 (%)" value={settings.takeProfit3} onChange={(v) => setSettings({...settings, takeProfit3: v})} />
+              <InputField label="Stop Loss (%)" value={settings.stopLoss} onChange={(v) => setSettings({...settings, stopLoss: v})} />
             </div>
           </div>
 
-          {/* Safety Settings */}
+          {/* Safety */}
           <div className="glass-card">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span>🛡️</span> Safety Settings
             </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Min Liquidity (USD)</label>
-                <input
-                  type="text"
-                  value={settings.minLiquidity}
-                  onChange={(e) => setSettings({...settings, minLiquidity: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Max Buy Tax (%)</label>
-                <input
-                  type="text"
-                  value={settings.maxBuyTax}
-                  onChange={(e) => setSettings({...settings, maxBuyTax: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Max Sell Tax (%)</label>
-                <input
-                  type="text"
-                  value={settings.maxSellTax}
-                  onChange={(e) => setSettings({...settings, maxSellTax: e.target.value})}
-                  className="input-glass"
-                />
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <span className="text-sm">Check Honeypot</span>
-                <button
-                  onClick={() => setSettings({...settings, checkHoneypot: !settings.checkHoneypot})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.checkHoneypot ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.checkHoneypot ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <span className="text-sm">Require Verified Contract</span>
-                <button
-                  onClick={() => setSettings({...settings, checkContractVerified: !settings.checkContractVerified})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.checkContractVerified ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.checkContractVerified ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <InputField label="Min Liquidity (USD)" value={settings.minLiquidity} onChange={(v) => setSettings({...settings, minLiquidity: v})} />
+              <InputField label="Max Buy Tax (%)" value={settings.maxBuyTax} onChange={(v) => setSettings({...settings, maxBuyTax: v})} />
+              <InputField label="Max Sell Tax (%)" value={settings.maxSellTax} onChange={(v) => setSettings({...settings, maxSellTax: v})} />
+              <SettingRow label="Check Honeypot" value={settings.checkHoneypot} onChange={() => setSettings({...settings, checkHoneypot: !settings.checkHoneypot})} />
+              <SettingRow label="Require Verified Contract" value={settings.checkContractVerified} onChange={() => setSettings({...settings, checkContractVerified: !settings.checkContractVerified})} />
             </div>
           </div>
 
           {/* Notifications */}
           <div className="glass-card">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span>🔔</span> Notifications
             </h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <span className="text-sm">Notify on Buy</span>
-                <button
-                  onClick={() => setSettings({...settings, notifyOnBuy: !settings.notifyOnBuy})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.notifyOnBuy ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.notifyOnBuy ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <span className="text-sm">Notify on Sell</span>
-                <button
-                  onClick={() => setSettings({...settings, notifyOnSell: !settings.notifyOnSell})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.notifyOnSell ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.notifyOnSell ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <span className="text-sm">Notify on Snipe</span>
-                <button
-                  onClick={() => setSettings({...settings, notifyOnSnipe: !settings.notifyOnSnipe})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.notifyOnSnipe ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.notifyOnSnipe ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Telegram Bot Token</label>
-                <input
-                  type="text"
-                  value={settings.telegramBot}
-                  onChange={(e) => setSettings({...settings, telegramBot: e.target.value})}
-                  className="input-glass"
-                  placeholder="Optional"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Discord Webhook</label>
-                <input
-                  type="text"
-                  value={settings.discordWebhook}
-                  onChange={(e) => setSettings({...settings, discordWebhook: e.target.value})}
-                  className="input-glass"
-                  placeholder="Optional"
-                />
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <SettingRow label="Notify on Buy" value={settings.notifyOnBuy} onChange={() => setSettings({...settings, notifyOnBuy: !settings.notifyOnBuy})} />
+              <SettingRow label="Notify on Sell" value={settings.notifyOnSell} onChange={() => setSettings({...settings, notifyOnSell: !settings.notifyOnSell})} />
+              <SettingRow label="Notify on Snipe" value={settings.notifyOnSnipe} onChange={() => setSettings({...settings, notifyOnSnipe: !settings.notifyOnSnipe})} />
+              <InputField label="Telegram Bot Token" value={settings.telegramBot} onChange={(v) => setSettings({...settings, telegramBot: v})} placeholder="Optional" />
+              <InputField label="Discord Webhook" value={settings.discordWebhook} onChange={(v) => setSettings({...settings, discordWebhook: v})} placeholder="Optional" />
             </div>
           </div>
 
-          {/* Advanced Settings */}
-          <div className="glass-card lg:col-span-2">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          {/* Advanced */}
+          <div className="glass-card" style={{ gridColumn: "span 2" }}>
+            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span>⚡</span> Advanced Settings
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <div>
-                  <span className="text-sm block">MEV Protection</span>
-                  <span className="text-xs text-[var(--color-text-muted)]">Protect from MEV attacks</span>
-                </div>
-                <button
-                  onClick={() => setSettings({...settings, mevProtection: !settings.mevProtection})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.mevProtection ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.mevProtection ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <div>
-                  <span className="text-sm block">Frontrun Protection</span>
-                  <span className="text-xs text-[var(--color-text-muted)]">Prevent frontrunning</span>
-                </div>
-                <button
-                  onClick={() => setSettings({...settings, frontrunProtection: !settings.frontrunProtection})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.frontrunProtection ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.frontrunProtection ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)]">
-                <div>
-                  <span className="text-sm block">Private Mempool</span>
-                  <span className="text-xs text-[var(--color-text-muted)]">Use private transactions</span>
-                </div>
-                <button
-                  onClick={() => setSettings({...settings, privateMempool: !settings.privateMempool})}
-                  className={`w-12 h-6 rounded-full transition-all ${settings.privateMempool ? "bg-[var(--color-success)]" : "bg-[var(--color-text-muted)]"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transform transition-transform ${settings.privateMempool ? "translate-x-6" : "translate-x-1"}`} />
-                </button>
-              </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "14px" }}>
+              <SettingRow label="MEV Protection" desc="Protect from MEV attacks" value={settings.mevProtection} onChange={() => setSettings({...settings, mevProtection: !settings.mevProtection})} />
+              <SettingRow label="Frontrun Protection" desc="Prevent frontrunning" value={settings.frontrunProtection} onChange={() => setSettings({...settings, frontrunProtection: !settings.frontrunProtection})} />
+              <SettingRow label="Private Mempool" desc="Use private transactions" value={settings.privateMempool} onChange={() => setSettings({...settings, privateMempool: !settings.privateMempool})} />
             </div>
           </div>
         </div>
 
-        <footer className="mt-8 text-center text-xs text-[var(--color-text-muted)]">
+        <footer style={{ marginTop: "32px", textAlign: "center", fontSize: "11px", color: "var(--color-text-muted)" }}>
           <p>WRAITH © 2026 — Built with Next.js & Tailwind CSS</p>
         </footer>
       </main>

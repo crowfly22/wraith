@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-// Mock data for demo
 const mockTokens = [
   { name: "PEPE 2.0", symbol: "PEPE2", chain: "ETH", price: "$0.00001234", change: "+245%", volume: "$1.2M", status: "new" },
   { name: "Shiba Inu", symbol: "SHIB", chain: "ETH", price: "$0.00002789", change: "+18%", volume: "$450M", status: "trending" },
@@ -13,11 +12,11 @@ const mockTokens = [
 ];
 
 const mockTrades = [
-  { token: "PEPE2", action: "BUY", amount: "0.5 ETH", price: "$0.00001234", time: "2s ago", status: "success", pnl: "+$1,234" },
-  { token: "SHIB", action: "SELL", amount: "100M SHIB", price: "$0.00002789", time: "15s ago", status: "success", pnl: "+$567" },
-  { token: "FLOKI", action: "BUY", amount: "0.2 BNB", price: "$0.000156", time: "1m ago", status: "pending", pnl: "..." },
-  { token: "BONK", action: "BUY", amount: "2 SOL", price: "$0.000034", time: "3m ago", status: "success", pnl: "+$890" },
-  { token: "WIF", action: "SELL", amount: "50 WIF", price: "$2.45", time: "5m ago", status: "success", pnl: "+$2,345" },
+  { token: "PEPE2", action: "BUY", amount: "0.5 ETH", time: "2s ago", pnl: "+$1,234" },
+  { token: "SHIB", action: "SELL", amount: "100M SHIB", time: "15s ago", pnl: "+$567" },
+  { token: "FLOKI", action: "BUY", amount: "0.2 BNB", time: "1m ago", pnl: "..." },
+  { token: "BONK", action: "BUY", amount: "2 SOL", time: "3m ago", pnl: "+$890" },
+  { token: "WIF", action: "SELL", amount: "50 WIF", time: "5m ago", pnl: "+$2,345" },
 ];
 
 const mockMempool = [
@@ -33,9 +32,16 @@ const chains = [
   { name: "Solana", symbol: "SOL", color: "#00FFA3", icon: "◎" },
 ];
 
+const sidebarTokens = [
+  { name: "APE 2.0", price: "$0.0000123", change: "+245%", color: "#00e5ff" },
+  { name: "Shiba Inu", price: "$0.0000278", change: "+18%", color: "#F0B90B" },
+  { name: "Pepe", price: "$0.0000345", change: "+67%", color: "#00e676" },
+  { name: "Doge", price: "$0.0000567", change: "+12%", color: "#a855f7" },
+  { name: "INU", price: "$0.0000890", change: "+89%", color: "#f472b6" },
+];
+
 export default function Home() {
   const [activeChain, setActiveChain] = useState("ETH");
-  const [isConnected, setIsConnected] = useState(true);
   const [sniperActive, setSniperActive] = useState(true);
   const [stats, setStats] = useState({
     totalProfit: "$45,678",
@@ -44,7 +50,6 @@ export default function Home() {
     activeSnipers: "3",
   });
 
-  // Simulate live data updates
   useEffect(() => {
     const interval = setInterval(() => {
       setStats(prev => ({
@@ -58,175 +63,221 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 fixed left-0 top-0 h-full glass border-r border-[var(--color-border-glow)] z-50">
-        <div className="p-6">
-          {/* Logo */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold gradient-text" style={{ fontFamily: "'Playfair Display', serif" }}>
-              WRAITH
-            </h1>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">Web3 Sniper Bot</p>
-          </div>
+      {/* ===== SIDEBAR ===== */}
+      <aside className="sidebar">
+        {/* Logo */}
+        <div className="sidebar-logo">
+          <h1 className="gradient-text" style={{ fontFamily: "'Playfair Display', serif" }}>WRAITH</h1>
+          <p>WEB3 SNIPER BOT</p>
+        </div>
 
-          {/* Navigation */}
-          <nav className="space-y-2">
-            <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(0,229,255,0.1)] border border-[var(--color-border-glow)] text-[var(--color-accent)]">
-              <span className="text-lg">🎯</span>
-              <span className="font-medium">Dashboard</span>
+        {/* Navigation */}
+        <div className="sidebar-section">
+          <div className="sidebar-section-title">Navigation</div>
+          <nav>
+            <Link href="/" className="sidebar-nav-item active">
+              <span className="icon">🎯</span>
+              <span>Dashboard</span>
             </Link>
-            <Link href="/scanner" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-text-secondary)] hover:bg-[rgba(0,229,255,0.05)] hover:border hover:border-[var(--color-border-glow)] transition-all">
-              <span className="text-lg">🔍</span>
-              <span className="font-medium">Token Scanner</span>
+            <Link href="/scanner" className="sidebar-nav-item">
+              <span className="icon">🔍</span>
+              <span>Token Scanner</span>
             </Link>
-            <Link href="/history" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-text-secondary)] hover:bg-[rgba(0,229,255,0.05)] hover:border hover:border-[var(--color-border-glow)] transition-all">
-              <span className="text-lg">📊</span>
-              <span className="font-medium">Trade History</span>
+            <Link href="/history" className="sidebar-nav-item">
+              <span className="icon">📊</span>
+              <span>Trade History</span>
             </Link>
-            <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-text-secondary)] hover:bg-[rgba(0,229,255,0.05)] hover:border hover:border-[var(--color-border-glow)] transition-all">
-              <span className="text-lg">⚙️</span>
-              <span className="font-medium">Settings</span>
+            <Link href="/settings" className="sidebar-nav-item">
+              <span className="icon">⚙️</span>
+              <span>Settings</span>
             </Link>
           </nav>
+        </div>
 
-          {/* Chain Selector */}
-          <div className="mt-8">
-            <p className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Active Chain</p>
-            <div className="space-y-2">
-              {chains.map((chain) => (
-                <button
-                  key={chain.symbol}
-                  onClick={() => setActiveChain(chain.symbol)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    activeChain === chain.symbol
-                      ? "bg-[rgba(0,229,255,0.1)] border border-[var(--color-border-glow)]"
-                      : "hover:bg-[rgba(255,255,255,0.03)]"
-                  }`}
-                >
-                  <span className="text-lg" style={{ color: chain.color }}>{chain.icon}</span>
-                  <span className={`font-medium ${activeChain === chain.symbol ? "text-[var(--color-accent)]" : "text-[var(--color-text-secondary)]"}`}>
-                    {chain.name}
-                  </span>
-                  {activeChain === chain.symbol && (
-                    <span className="ml-auto status-dot online"></span>
-                  )}
-                </button>
-              ))}
-            </div>
+        {/* Chain Selector */}
+        <div className="sidebar-section">
+          <div className="sidebar-section-title">Active Chain</div>
+          {chains.map((chain) => (
+            <button
+              key={chain.symbol}
+              onClick={() => setActiveChain(chain.symbol)}
+              className={`sidebar-chain-btn ${activeChain === chain.symbol ? "active" : ""}`}
+            >
+              <span className="icon" style={{ color: chain.color }}>{chain.icon}</span>
+              <span>{chain.name}</span>
+              {activeChain === chain.symbol && (
+                <span className="status-dot online" style={{ marginLeft: "auto" }}></span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Sniper Status */}
+        <div className="sidebar-card">
+          <div className="sidebar-card-header">
+            <span className="sidebar-card-title">Sniper Status</span>
+            <span className={`status-dot ${sniperActive ? "online" : "offline"}`}></span>
           </div>
+          <button
+            onClick={() => setSniperActive(!sniperActive)}
+            style={{
+              width: "100%",
+              padding: "8px",
+              borderRadius: "8px",
+              border: "none",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+              background: sniperActive ? "var(--color-success)" : "var(--color-danger)",
+              color: sniperActive ? "#000" : "#fff",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {sniperActive ? "ACTIVE" : "PAUSED"}
+          </button>
+          <p style={{ fontSize: "11px", color: "var(--color-text-muted)", marginTop: "6px" }}>
+            Monitoring {activeChain} mempool...
+          </p>
+        </div>
 
-          {/* Sniper Status */}
-          <div className="mt-8 glass-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium">Sniper Status</span>
-              <span className={`status-dot ${sniperActive ? "online" : "offline"}`}></span>
+        {/* Wallet */}
+        <div className="sidebar-card">
+          <div className="sidebar-card-header">
+            <span className="sidebar-card-title">Wallet</span>
+            <span className="status-dot online"></span>
+          </div>
+          <div className="sidebar-wallet-address">0x16DA...bf0F</div>
+          <div className="sidebar-wallet-balance">
+            <span className="amount gradient-text">2.45</span>
+            <span className="unit">ETH</span>
+          </div>
+        </div>
+
+        {/* Hot Tokens */}
+        <div className="sidebar-section">
+          <div className="sidebar-section-title">Hot Tokens</div>
+          {sidebarTokens.map((token, i) => (
+            <div key={i} className="sidebar-token">
+              <div className="sidebar-token-icon" style={{ background: `${token.color}22`, color: token.color }}>
+                {token.name[0]}
+              </div>
+              <div className="sidebar-token-info">
+                <div className="sidebar-token-name">{token.name}</div>
+                <div className="sidebar-token-price">{token.price}</div>
+              </div>
+              <div className="sidebar-token-change" style={{ color: "var(--color-success)" }}>
+                {token.change}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setSniperActive(!sniperActive)}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-                  sniperActive
-                    ? "bg-[var(--color-success)] text-black"
-                    : "bg-[var(--color-danger)] text-white"
-                }`}
+          ))}
+        </div>
+
+        {/* Recent Trades */}
+        <div className="sidebar-section">
+          <div className="sidebar-section-title">Recent Trades</div>
+          {mockTrades.map((trade, i) => (
+            <div key={i} className="sidebar-trade">
+              <div
+                className="sidebar-trade-icon"
+                style={{
+                  background: trade.action === "BUY" ? "rgba(0,230,118,0.15)" : "rgba(255,82,82,0.15)",
+                  color: trade.action === "BUY" ? "var(--color-success)" : "var(--color-danger)",
+                }}
               >
-                {sniperActive ? "ACTIVE" : "PAUSED"}
-              </button>
+                {trade.action === "BUY" ? "↑" : "↓"}
+              </div>
+              <div className="sidebar-trade-info">
+                <div className="sidebar-trade-action">{trade.action} {trade.token}</div>
+                <div className="sidebar-trade-time">{trade.time}</div>
+              </div>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-success)" }}>
+                {trade.pnl}
+              </div>
             </div>
-            <p className="text-xs text-[var(--color-text-muted)] mt-2">
-              Monitoring {activeChain} mempool...
-            </p>
-          </div>
-
-          {/* Wallet */}
-          <div className="mt-4 glass-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Wallet</span>
-              <span className="status-dot online"></span>
-            </div>
-            <p className="text-xs font-mono text-[var(--color-text-secondary)]">0x16DA...bf0F</p>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-lg font-bold gradient-text">2.45</span>
-              <span className="text-sm text-[var(--color-text-secondary)]">ETH</span>
-            </div>
-          </div>
+          ))}
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="ml-64 flex-1 p-6">
+      {/* ===== MAIN CONTENT ===== */}
+      <main className="main-content">
         {/* Header */}
-        <header className="flex items-center justify-between mb-8">
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "32px" }}>
           <div>
-            <h2 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 style={{ fontSize: "32px", fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>
               Sniper Dashboard
             </h2>
-            <p className="text-[var(--color-text-secondary)] mt-1">
+            <p style={{ color: "var(--color-text-secondary)", marginTop: "4px", fontSize: "14px" }}>
               Real-time {activeChain} mempool monitoring & auto-snipe
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="glass-card py-2 px-4 flex items-center gap-2">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div className="glass-card" style={{ padding: "8px 16px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span className="status-dot online pulse-glow"></span>
-              <span className="text-sm">Connected</span>
+              <span style={{ fontSize: "13px" }}>Connected</span>
             </div>
-            <button className="btn-primary">
-              + New Sniper
-            </button>
+            <button className="btn-primary">+ New Sniper</button>
           </div>
         </header>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
           <div className="glass-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[var(--color-text-secondary)]">Total Profit</span>
-              <span className="text-[var(--color-success)]">↑ 12.5%</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+              <span style={{ fontSize: "13px", color: "var(--color-text-secondary)" }}>Total Profit</span>
+              <span style={{ fontSize: "12px", color: "var(--color-success)" }}>↑ 12.5%</span>
             </div>
-            <p className="text-3xl font-bold gradient-text">{stats.totalProfit}</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">Last 30 days</p>
+            <p style={{ fontSize: "28px", fontWeight: 700 }} className="gradient-text">{stats.totalProfit}</p>
+            <p style={{ fontSize: "11px", color: "var(--color-text-muted)", marginTop: "4px" }}>Last 30 days</p>
           </div>
           <div className="glass-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[var(--color-text-secondary)]">Win Rate</span>
-              <span className="text-[var(--color-success)]">↑ 3.2%</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+              <span style={{ fontSize: "13px", color: "var(--color-text-secondary)" }}>Win Rate</span>
+              <span style={{ fontSize: "12px", color: "var(--color-success)" }}>↑ 3.2%</span>
             </div>
-            <p className="text-3xl font-bold text-[var(--color-success)]">{stats.winRate}</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">183/234 trades</p>
+            <p style={{ fontSize: "28px", fontWeight: 700, color: "var(--color-success)" }}>{stats.winRate}</p>
+            <p style={{ fontSize: "11px", color: "var(--color-text-muted)", marginTop: "4px" }}>183/234 trades</p>
           </div>
           <div className="glass-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[var(--color-text-secondary)]">Total Trades</span>
-              <span className="text-[var(--color-accent)]">Live</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+              <span style={{ fontSize: "13px", color: "var(--color-text-secondary)" }}>Total Trades</span>
+              <span style={{ fontSize: "12px", color: "var(--color-accent)" }}>Live</span>
             </div>
-            <p className="text-3xl font-bold text-[var(--color-text-primary)]">{stats.totalTrades}</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">All time</p>
+            <p style={{ fontSize: "28px", fontWeight: 700 }}>{stats.totalTrades}</p>
+            <p style={{ fontSize: "11px", color: "var(--color-text-muted)", marginTop: "4px" }}>All time</p>
           </div>
           <div className="glass-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[var(--color-text-secondary)]">Active Snipers</span>
-              <span className="text-[var(--color-accent-purple)]">3/5</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+              <span style={{ fontSize: "13px", color: "var(--color-text-secondary)" }}>Active Snipers</span>
+              <span style={{ fontSize: "12px", color: "var(--color-accent-purple)" }}>3/5</span>
             </div>
-            <p className="text-3xl font-bold text-[var(--color-accent-purple)]">{stats.activeSnipers}</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">Running now</p>
+            <p style={{ fontSize: "28px", fontWeight: 700, color: "var(--color-accent-purple)" }}>{stats.activeSnipers}</p>
+            <p style={{ fontSize: "11px", color: "var(--color-text-muted)", marginTop: "4px" }}>Running now</p>
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "24px" }}>
           {/* Mempool Monitor */}
-          <div className="lg:col-span-2 glass-card">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Mempool Monitor</h3>
-              <div className="flex items-center gap-2">
+          <div className="glass-card">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+              <h3 style={{ fontSize: "16px", fontWeight: 600 }}>Mempool Monitor</h3>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                 <span className="status-dot online pulse-glow"></span>
-                <span className="text-xs text-[var(--color-text-muted)]">Live</span>
+                <span style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>Live</span>
               </div>
             </div>
-            <div className="space-y-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {mockMempool.map((tx, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)] hover:bg-[rgba(0,229,255,0.03)] transition-all">
-                  <div className="flex items-center gap-3">
+                <div key={i} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  background: "rgba(0,0,0,0.3)",
+                  transition: "all 0.2s ease",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     <span className={`tag ${
                       tx.type === "Add Liquidity" ? "tag-success" :
                       tx.type === "Remove Liquidity" ? "tag-danger" :
@@ -235,13 +286,13 @@ export default function Home() {
                       {tx.type}
                     </span>
                     <div>
-                      <p className="text-sm font-medium">{tx.token}</p>
-                      <p className="text-xs text-[var(--color-text-muted)] font-mono">{tx.hash}</p>
+                      <p style={{ fontSize: "13px", fontWeight: 500 }}>{tx.token}</p>
+                      <p style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "'JetBrains Mono', monospace" }}>{tx.hash}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{tx.amount}</p>
-                    <p className="text-xs text-[var(--color-text-muted)]">{tx.gas} • {tx.time}</p>
+                  <div style={{ textAlign: "right" }}>
+                    <p style={{ fontSize: "13px", fontWeight: 500 }}>{tx.amount}</p>
+                    <p style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>{tx.gas} • {tx.time}</p>
                   </div>
                 </div>
               ))}
@@ -250,35 +301,86 @@ export default function Home() {
 
           {/* Quick Actions */}
           <div className="glass-card">
-            <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <button className="w-full btn-primary flex items-center justify-center gap-2">
-                <span>🎯</span> Quick Snipe
+            <h3 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "16px" }}>Quick Actions</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <button className="btn-primary" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                🎯 Quick Snipe
               </button>
-              <button className="w-full py-3 rounded-xl bg-[rgba(168,85,247,0.2)] border border-[rgba(168,85,247,0.3)] text-[var(--color-accent-purple)] font-medium hover:bg-[rgba(168,85,247,0.3)] transition-all flex items-center justify-center gap-2">
-                <span>🔍</span> Scan Token
+              <button style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "1px solid rgba(168,85,247,0.3)",
+                background: "rgba(168,85,247,0.15)",
+                color: "var(--color-accent-purple)",
+                fontWeight: 500,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                transition: "all 0.2s ease",
+              }}>
+                🔍 Scan Token
               </button>
-              <button className="w-full py-3 rounded-xl bg-[rgba(0,230,118,0.1)] border border-[rgba(0,230,118,0.2)] text-[var(--color-success)] font-medium hover:bg-[rgba(0,230,118,0.2)] transition-all flex items-center justify-center gap-2">
-                <span>📊</span> View Analytics
+              <button style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "1px solid rgba(0,230,118,0.2)",
+                background: "rgba(0,230,118,0.1)",
+                color: "var(--color-success)",
+                fontWeight: 500,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                transition: "all 0.2s ease",
+              }}>
+                📊 View Analytics
               </button>
-              <button className="w-full py-3 rounded-xl bg-[rgba(255,82,82,0.1)] border border-[rgba(255,82,82,0.2)] text-[var(--color-danger)] font-medium hover:bg-[rgba(255,82,82,0.2)] transition-all flex items-center justify-center gap-2">
-                <span>🚨</span> Emergency Stop
+              <button style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "1px solid rgba(255,82,82,0.2)",
+                background: "rgba(255,82,82,0.1)",
+                color: "var(--color-danger)",
+                fontWeight: 500,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                transition: "all 0.2s ease",
+              }}>
+                🚨 Emergency Stop
               </button>
             </div>
 
             {/* Active Snipers */}
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-[var(--color-text-secondary)] mb-3">Active Snipers</h4>
-              <div className="space-y-2">
+            <div style={{ marginTop: "24px" }}>
+              <h4 style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Active Snipers
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {[
                   { name: "Liquidity Sniper", chain: "ETH", status: "watching" },
                   { name: "Volume Bot", chain: "BSC", status: "active" },
                   { name: "Mempool Sniper", chain: "SOL", status: "watching" },
                 ].map((sniper, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-[rgba(0,0,0,0.2)]">
+                  <div key={i} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 12px",
+                    borderRadius: "10px",
+                    background: "rgba(0,0,0,0.2)",
+                  }}>
                     <div>
-                      <p className="text-sm font-medium">{sniper.name}</p>
-                      <p className="text-xs text-[var(--color-text-muted)]">{sniper.chain}</p>
+                      <p style={{ fontSize: "13px", fontWeight: 500 }}>{sniper.name}</p>
+                      <p style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>{sniper.chain}</p>
                     </div>
                     <span className={`tag ${sniper.status === "active" ? "tag-success" : "tag-warning"}`}>
                       {sniper.status}
@@ -290,15 +392,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Hot Tokens */}
-        <div className="mt-6 glass-card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Hot Tokens</h3>
-            <Link href="/scanner" className="text-sm text-[var(--color-accent)] hover:underline">
+        {/* Hot Tokens Table */}
+        <div className="glass-card" style={{ marginTop: "24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+            <h3 style={{ fontSize: "16px", fontWeight: 600 }}>Hot Tokens</h3>
+            <Link href="/scanner" style={{ fontSize: "13px", color: "var(--color-accent)", textDecoration: "none" }}>
               View All →
             </Link>
           </div>
-          <div className="overflow-x-auto">
+          <div style={{ overflowX: "auto" }}>
             <table className="table-glass">
               <thead>
                 <tr>
@@ -315,13 +417,24 @@ export default function Home() {
                 {mockTokens.map((token, i) => (
                   <tr key={i}>
                     <td>
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-purple)] flex items-center justify-center text-xs font-bold">
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          background: "linear-gradient(135deg, var(--color-accent), var(--color-accent-purple))",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          flexShrink: 0,
+                        }}>
                           {token.symbol[0]}
                         </div>
                         <div>
-                          <p className="font-medium">{token.name}</p>
-                          <p className="text-xs text-[var(--color-text-muted)]">{token.symbol}</p>
+                          <p style={{ fontWeight: 500 }}>{token.name}</p>
+                          <p style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>{token.symbol}</p>
                         </div>
                       </div>
                     </td>
@@ -333,8 +446,8 @@ export default function Home() {
                         {token.chain}
                       </span>
                     </td>
-                    <td className="font-mono">{token.price}</td>
-                    <td className="text-[var(--color-success)]">{token.change}</td>
+                    <td style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "13px" }}>{token.price}</td>
+                    <td style={{ color: "var(--color-success)", fontWeight: 500 }}>{token.change}</td>
                     <td>{token.volume}</td>
                     <td>
                       <span className={`tag ${
@@ -346,9 +459,7 @@ export default function Home() {
                       </span>
                     </td>
                     <td>
-                      <button className="px-3 py-1 rounded-lg bg-[rgba(0,229,255,0.1)] border border-[var(--color-border-glow)] text-[var(--color-accent)] text-sm hover:bg-[rgba(0,229,255,0.2)] transition-all">
-                        Snipe
-                      </button>
+                      <button className="snipe-btn">Snipe</button>
                     </td>
                   </tr>
                 ))}
@@ -357,41 +468,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Recent Trades */}
-        <div className="mt-6 glass-card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Recent Trades</h3>
-            <Link href="/history" className="text-sm text-[var(--color-accent)] hover:underline">
-              View All →
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {mockTrades.map((trade, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[rgba(0,0,0,0.3)] hover:bg-[rgba(0,229,255,0.03)] transition-all">
-                <div className="flex items-center gap-3">
-                  <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    trade.action === "BUY" ? "bg-[rgba(0,230,118,0.2)] text-[var(--color-success)]" : "bg-[rgba(255,82,82,0.2)] text-[var(--color-danger)]"
-                  }`}>
-                    {trade.action === "BUY" ? "↑" : "↓"}
-                  </span>
-                  <div>
-                    <p className="font-medium">{trade.action} {trade.token}</p>
-                    <p className="text-xs text-[var(--color-text-muted)]">{trade.amount}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className={`font-medium ${trade.pnl.startsWith("+") ? "text-[var(--color-success)]" : "text-[var(--color-text-secondary)]"}`}>
-                    {trade.pnl}
-                  </p>
-                  <p className="text-xs text-[var(--color-text-muted)]">{trade.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Footer */}
-        <footer className="mt-8 text-center text-xs text-[var(--color-text-muted)]">
+        <footer style={{ marginTop: "32px", textAlign: "center", fontSize: "11px", color: "var(--color-text-muted)" }}>
           <p>WRAITH © 2026 — Built with Next.js & Tailwind CSS</p>
         </footer>
       </main>
